@@ -33,6 +33,6 @@ npm run serve
 6. Предпочтительно сделать на VueJS, BootstrapVue, TypeScript 
 
 ### Результаты
-!(images/1.png)
-!(images/2.png)
-!(images/3.png)
+![До внесений изменений выполнен по условиям задачи CRUD](images/1.png)
+![После изменений данных результаты соответствует условиям задачи](images/2.png)
+![Данные в EXCEL и PDF](images/3.png)
