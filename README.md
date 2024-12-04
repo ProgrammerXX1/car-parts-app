@@ -33,6 +33,6 @@ npm run serve
 6. Предпочтительно сделать на VueJS, BootstrapVue, TypeScript 
 
 ### Результаты
-(images/1.png)
-(images/2.png)
-(images/3.png)
+!(images/1.png)
+!(images/2.png)
+!(images/3.png)
