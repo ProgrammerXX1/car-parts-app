@@ -332,12 +332,12 @@ export default defineComponent({
 
   // Подключение шрифта
   doc.addFileToVFS('Roboto-Regular.ttf', myFont);
-  doc.addFont('Roboto-Regular.ttf', 'Roboto', 'normal');
-  doc.setFont('Roboto');
+  doc.addFont('Roboto-Regular.ttf', 'Roboto-Regular', 'normal');
+  doc.setFont('Roboto-Regular');
 
   // Заголовок
   doc.setFontSize(16);
-  doc.text('Details cars', 10, 10);
+  doc.text('Детали машины', 10, 10);
 
   // Данные для таблицы
   const tableData = this.flattenParts(this.parts).map((part) => [
