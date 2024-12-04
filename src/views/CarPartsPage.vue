@@ -135,6 +135,7 @@ import * as XLSX from 'xlsx'; // Импортируем библиотеку XLS
 import jsPDF from 'jspdf'; // Импортируем библиотеку jsPDF для экспорта в PDF
 import 'jspdf-autotable';
 import myFont from '../fonts/Roboto-Regular.base64';
+import { AutoTableOptions } from 'jspdf-autotable';
 
 export default defineComponent({
   data() {
@@ -348,12 +349,25 @@ export default defineComponent({
   ]);
 
   // Таблица
-  doc.autoTable({
-    head: [['Detail', 'Price', 'Count', 'Summ']],
+  const options:AutoTableOptions={
+    head: [['Детали', 'Цены', 'Число', 'Сумма']],
     body: tableData,
     startY: 20, // Начало таблицы ниже заголовка
-  });
-
+    styles: {
+          font: 'Roboto-Regular',
+          fontSize: 10,
+          textColor: 'black',
+        },
+        headStyles: {
+          fontSize: 12,
+          fillColor: '#f0f0f0',
+        },
+        alternateRowStyles: {
+          fillColor: '#f9f9f9',
+        },
+  }
+  ;
+  doc.autoTable(options);
   // Сохранение файла
   doc.save('car_parts.pdf');
     },
