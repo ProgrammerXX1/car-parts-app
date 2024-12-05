@@ -3,6 +3,5 @@ export interface Part {
   name: string;
   price: number;
   quantity: number;
-  showChildren?: boolean; // Добавляем свойство showChildren
   children?: Part[];
 }
