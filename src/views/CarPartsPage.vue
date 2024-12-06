@@ -204,7 +204,6 @@ addPart(id: string) {
   };
   findAndUpdate(this.parts);
 },
-
 calculateDetailPrice(part: Part): number {
   if (part.children && part.children.length > 0) {
     return part.children.reduce(
@@ -214,12 +213,16 @@ calculateDetailPrice(part: Part): number {
   }
   return part.price;
 },
-
-    calculateTotal(part: Part): number {
-      const detailPrice = this.calculateDetailPrice(part);
-      const basePrice = this.includeBasePrice ? part.price : 0;
-      return (basePrice + detailPrice) * part.quantity;
-    },
+calculateTotal(part: Part): number {
+  const detailPrice = this.calculateDetailPrice(part);
+  // Если ползунок включен, берем наибольшую сумму
+  if (this.includeBasePrice) {
+    const basePrice = part.price;
+    return Math.max(basePrice, detailPrice) * part.quantity;
+  }
+  // Если ползунок выключен, просто сумма деталей
+  return detailPrice * part.quantity;
+},
     flattenParts(parts: Part[], level: number): { part: Part; level: number }[] {
   const flatten = (parts: Part[], level: number): { part: Part; level: number }[] => {
     return parts.reduce((acc: { part: Part; level: number }[], part: Part) => {
@@ -256,17 +259,25 @@ calculateDetailPrice(part: Part): number {
       findAndUpdate(this.parts);
     },
     exportToExcel() {
-  const partsForExport = this.flattenParts(this.parts, 0).map(({ part }) => ({
-    ...part,
-    summ: this.calculateTotal(part),
+  // Формируем данные для экспорта
+  const partsForExport = this.flattenParts(this.parts, 0).map(({ part, level }) => ({
+    Уровень: level, // Добавляем уровень
+    Название: part.name, // Название детали
+    'Базовая цена': part.price > 0 ? part.price : '—', // Базовая цена
+    'Цена деталей': this.calculateDetailPrice(part), // Цена всех вложенных деталей
+    Количество: part.quantity, // Количество
+    Стоимость: this.calculateTotal(part), // Итоговая стоимость
   }));
 
+  // Создаём лист Excel
   const worksheet = XLSX.utils.json_to_sheet(partsForExport);
   const workbook = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(workbook, worksheet, 'Детали');
 
+  // Сохраняем файл
   XLSX.writeFile(workbook, 'car_parts.xlsx');
-},
+}
+,
 exportToPDF(): void {
   const doc = new jsPDF();
 
@@ -277,17 +288,21 @@ exportToPDF(): void {
 
   // Заголовок
   doc.setFontSize(24);
-  doc.text('Детали машины', 10,10);
+  doc.text('Детали машины', 10, 10);
 
-  const tableData = this.flattenParts(this.parts, 0).map(({ part }) => [
-    part.name,
-    part.price.toString(),
-    part.quantity.toString(),
-    this.calculateTotal(part).toString(),
+  // Формирование данных для таблицы
+  const tableData = this.flattenParts(this.parts, 0).map(({ part, level }) => [
+    level, // Уровень
+    part.name, // Название
+    part.price > 0 ? part.price : '—', // Базовая цена
+    this.calculateDetailPrice(part), // Цена деталей
+    part.quantity, // Количество
+    this.calculateTotal(part), // Итоговая стоимость
   ]);
 
+  // Настройки таблицы
   const options: AutoTableOptions = {
-    head: [['Деталь', 'Базовая цена', 'Количество', 'Стоимость']],
+    head: [['Уровень', 'Деталь', 'Базовая цена', 'Цена деталей', 'Количество', 'Стоимость']],
     body: tableData,
     startY: 20,
     styles: {
@@ -304,14 +319,17 @@ exportToPDF(): void {
     },
   };
 
+  // Генерация таблицы и сохранение файла
   doc.autoTable(options);
   doc.save('car_parts.pdf');
-},
+}
+,
   },
 });
 </script>
 
 <style>
+
 .btn-sm {
     --bs-btn-padding-y: 0.25rem;
     --bs-btn-padding-x: 0.5rem;
