@@ -1,0 +1,8 @@
+{
+    "build": {
+      "env": {
+        "DISABLE_MINIFICATION": "true"
+      }
+    }
+  }
+  
